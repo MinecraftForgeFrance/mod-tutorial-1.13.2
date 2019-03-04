@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[25,)" 
+#issueTrackerURL="" 
+
+[[mods]] 
+modId="modtutorial"
+version="${file.jarVersion}"
+displayName="Mod Tutorial"
+#updateJSONURL=""
+displayURL="https://www.minecraftforgefrance.fr/"
+#logoFile="examplemod.png"
+credits="Thanks to the mff staff"
+authors="robin4002, superloup10, brokenswing, elias54"
+description='''
+A mod to explain to other people how to make a mod
+'''
+
+[[dependencies.modtutorial]] #optional
+    modId="forge" 
+    mandatory=true 
+    versionRange="[25,)" 
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.modtutorial]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.13.2]"
+    ordering="NONE"
+    side="BOTH"
