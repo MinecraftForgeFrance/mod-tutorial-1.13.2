@@ -1,3 +1,5 @@
 {
-  "block.modtutorial.block_tutorial": "Tutorial block"
+  "block.modtutorial.block_tutorial": "Tutorial block",
+  "itemGroup.mff": "MFF",
+  "itemGroup.enchant": "enchanted books"
 }

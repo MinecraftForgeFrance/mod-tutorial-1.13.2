@@ -24,6 +24,6 @@ public class ModTutorialBlocks {
 
 	@SubscribeEvent
 	public static void registerItem(final RegistryEvent.Register<Item> event) {
-		event.getRegistry().register(new ItemBlock(BLOCK_TUTORIAL, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)).setRegistryName(BLOCK_TUTORIAL.getRegistryName()));
+		event.getRegistry().register(new ItemBlock(BLOCK_TUTORIAL, new Item.Properties().group(ModTutorial.MFF_GROUP)).setRegistryName(BLOCK_TUTORIAL.getRegistryName()));
 	}
 }
