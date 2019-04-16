@@ -2,6 +2,15 @@ package dev.mff.modtutorial;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.init.Biomes;
+import net.minecraft.init.Blocks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -22,6 +31,9 @@ public class ModTutorial {
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::serverSetup);
+
+		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onCropGrow);
+		MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onExplosion);
 	}
 
 	private void setup(final FMLCommonSetupEvent event) {
@@ -34,5 +46,16 @@ public class ModTutorial {
 
 	private void serverSetup(final FMLDedicatedServerSetupEvent event) {
 		LOGGER.info("Mod tutorial server setup");
+	}
+
+	public void onCropGrow(BlockEvent.CropGrowEvent.Pre event) {
+	    if (event.getState().getBlock() == Blocks.CACTUS && event.getWorld().getBiome(event.getPos()) != Biomes.DESERT) {
+	        event.setResult(Result.DENY);
+	    }
+	}
+
+	public void onExplosion(ExplosionEvent.Detonate event) {
+	    event.getAffectedBlocks().removeIf(pos -> event.getWorld().getBlockState(pos).getBlock() == Blocks.REDSTONE_LAMP);
+	    event.getAffectedEntities().removeIf(e -> e instanceof EntityCreeper);
 	}
 }
