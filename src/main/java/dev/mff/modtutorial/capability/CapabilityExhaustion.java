@@ -3,6 +3,7 @@ package dev.mff.modtutorial.capability;
 import dev.mff.modtutorial.ModTutorial;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.EnumFacing;
@@ -11,10 +12,13 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 @Mod.EventBusSubscriber(modid = ModTutorial.MOD_ID)
 public class CapabilityExhaustion
@@ -54,6 +58,27 @@ public class CapabilityExhaustion
         {
             PlayerExhaustionWrapper wrapper = new PlayerExhaustionWrapper();
             event.addCapability(CAP_KEY, wrapper);
+            if(event.getObject() instanceof EntityPlayer)
+            {
+                event.addListener(() -> wrapper.getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY).ifPresent(cap -> INVALIDATED_CAPS.put(event.getObject(), cap)));
+            }
+        }
+    }
+
+    private static final Map<Entity, IExhaustable> INVALIDATED_CAPS = new WeakHashMap<>();
+
+    @SubscribeEvent
+    public static void copyCapabilities(PlayerEvent.Clone event)
+    {
+        if(event.isWasDeath())
+        {
+            event.getEntityPlayer().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY).ifPresent(newCapa -> {
+                if(INVALIDATED_CAPS.containsKey(event.getOriginal()))
+                {
+                    INBTBase nbt = CapabilityExhaustion.EXHAUSTION_CAPABILITY.writeNBT(INVALIDATED_CAPS.get(event.getOriginal()), null);
+                    CapabilityExhaustion.EXHAUSTION_CAPABILITY.readNBT(newCapa, null, nbt);
+                }
+            });
         }
     }
 
