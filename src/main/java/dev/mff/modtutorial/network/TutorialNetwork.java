@@ -23,7 +23,7 @@ public class TutorialNetwork
 
     public static void registerNetworkPackets()
     {
-        ModTutorial.LOGGER.debug("Registering packets for mod {}" + ModTutorial.MOD_ID);
+        ModTutorial.LOGGER.debug("Registering packets for mod {}", ModTutorial.MOD_ID);
 
         CHANNEL.messageBuilder(MySimplePacket.class, 0)
                 .encoder(MySimplePacket::encode)
