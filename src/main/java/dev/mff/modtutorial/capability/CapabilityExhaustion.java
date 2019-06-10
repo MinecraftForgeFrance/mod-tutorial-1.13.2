@@ -4,6 +4,7 @@ import dev.mff.modtutorial.ModTutorial;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.EnumFacing;
@@ -54,10 +55,21 @@ public class CapabilityExhaustion
     @SubscribeEvent
     public static void attachToEntities(AttachCapabilitiesEvent<Entity> event)
     {
-        if(event.getObject() instanceof EntityLivingBase && !event.getObject().world.isRemote)
+        if(event.getObject() instanceof EntityLivingBase)
         {
-            PlayerExhaustionWrapper wrapper = new PlayerExhaustionWrapper();
+            IExhaustable holder;
+            if(event.getObject() instanceof EntityPlayerMP)
+            {
+                holder = new PlayerExhaustionHolder((EntityPlayerMP)event.getObject());
+            }
+            else
+            {
+                holder = CapabilityExhaustion.EXHAUSTION_CAPABILITY.getDefaultInstance();
+            }
+
+            PlayerExhaustionWrapper wrapper = new PlayerExhaustionWrapper(holder);
             event.addCapability(CAP_KEY, wrapper);
+
             if(event.getObject() instanceof EntityPlayer)
             {
                 event.addListener(() -> wrapper.getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY).ifPresent(cap -> INVALIDATED_CAPS.put(event.getObject(), cap)));

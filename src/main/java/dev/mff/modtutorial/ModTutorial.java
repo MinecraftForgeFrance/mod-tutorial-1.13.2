@@ -1,6 +1,7 @@
 package dev.mff.modtutorial;
 
 import dev.mff.modtutorial.capability.CapabilityExhaustion;
+import dev.mff.modtutorial.network.TutorialNetwork;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.minecraftforge.fml.common.Mod;
@@ -27,6 +28,7 @@ public class ModTutorial {
 
 	private void setup(final FMLCommonSetupEvent event) {
 		LOGGER.info("Mod tutorial setup");
+		TutorialNetwork.registerNetworkPackets();
 		CapabilityExhaustion.register();
 	}
 

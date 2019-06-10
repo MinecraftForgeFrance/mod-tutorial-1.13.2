@@ -12,8 +12,12 @@ import javax.annotation.Nullable;
 public class PlayerExhaustionWrapper implements ICapabilitySerializable<INBTBase>
 {
 
-    private IExhaustable holder = CapabilityExhaustion.EXHAUSTION_CAPABILITY.getDefaultInstance();
+    private IExhaustable holder;
     private final LazyOptional<IExhaustable> lazyOptional = LazyOptional.of(() -> this.holder);
+
+    public PlayerExhaustionWrapper(IExhaustable holder) {
+        this.holder = holder;
+    }
 
     @Nonnull
     @Override

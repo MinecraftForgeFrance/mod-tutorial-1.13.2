@@ -25,66 +25,70 @@ public class ExhaustionModificationsHandler
     @SubscribeEvent
     public static void onLivingJump(LivingEvent.LivingJumpEvent event)
     {
-        event.getEntity().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY)
-                .ifPresent(cap -> cap.increaseExhaustion(50));
+        if(!event.getEntity().world.isRemote())
+            event.getEntity().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY)
+                    .ifPresent(cap -> cap.increaseExhaustion(50));
     }
 
     @SubscribeEvent
     public static void onLivingTick(LivingEvent.LivingUpdateEvent event)
     {
-        event.getEntity().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY)
-                .ifPresent(cap -> {
-                    cap.reduceExhaustion(2);
-                    if(event.getEntity().motionX == 0 && event.getEntity().motionY == 0 && event.getEntity().motionZ ==0)
-                    {
-                        cap.reduceExhaustion(4);
-                    }
-                    if(event.getEntity().isSprinting())
-                    {
-                        cap.increaseExhaustion(3);
-                    }
-                    if(event.getEntity().isSwimming())
-                    {
-                        cap.increaseExhaustion(3);
-                    }
+        if(!event.getEntity().world.isRemote())
+            event.getEntity().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY)
+                    .ifPresent(cap -> {
+                        cap.reduceExhaustion(2);
+                        if(event.getEntity().motionX == 0 && event.getEntity().motionY == 0 && event.getEntity().motionZ ==0)
+                        {
+                            cap.reduceExhaustion(4);
+                        }
+                        if(event.getEntity().isSprinting())
+                        {
+                            cap.increaseExhaustion(3);
+                        }
+                        if(event.getEntity().isSwimming())
+                        {
+                            cap.increaseExhaustion(3);
+                        }
 
-                    // Operations :
-                    //  0 : valeur à ajouter à la valeur de base
-                    //          valeurFinale = valeurBase + quantite
-                    //  1 : pourcentage de la valeur de base à ajouter
-                    //          valeurFinale += valeurBase * quantite
-                    //  2 : pourcentage de la valeur finale à rajouter en plus
-                    //          valeurFinale *= 1 + quantite
-                    AttributeModifier modifier = new AttributeModifier(
-                            MODIFIER_ID,
-                            "exhaustion",
-                            - cap.getExhaustion() / 10_000f,
-                            2
-                    );
+                        // Operations :
+                        //  0 : valeur à ajouter à la valeur de base
+                        //          valeurFinale = valeurBase + quantite
+                        //  1 : pourcentage de la valeur de base à ajouter
+                        //          valeurFinale += valeurBase * quantite
+                        //  2 : pourcentage de la valeur finale à rajouter en plus
+                        //          valeurFinale *= 1 + quantite
+                        AttributeModifier modifier = new AttributeModifier(
+                                MODIFIER_ID,
+                                "exhaustion",
+                                - cap.getExhaustion() / 10_000f,
+                                2
+                        );
 
-                    updateModifierFor(EntityLivingBase.SWIM_SPEED, modifier, event.getEntityLiving());
-                    updateModifierFor(SharedMonsterAttributes.MOVEMENT_SPEED, modifier, event.getEntityLiving());
-                    updateModifierFor(SharedMonsterAttributes.ATTACK_SPEED, modifier, event.getEntityLiving());
+                        updateModifierFor(EntityLivingBase.SWIM_SPEED, modifier, event.getEntityLiving());
+                        updateModifierFor(SharedMonsterAttributes.MOVEMENT_SPEED, modifier, event.getEntityLiving());
+                        updateModifierFor(SharedMonsterAttributes.ATTACK_SPEED, modifier, event.getEntityLiving());
 
-                });
+                    });
     }
 
     @SubscribeEvent
     public static void onLivingEat(LivingEntityUseItemEvent event)
     {
-        event.getEntity().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY).ifPresent(capa -> {
-            if(event.getItem().getItem() instanceof ItemFood)
-            {
-                ItemFood food = (ItemFood) event.getItem().getItem();
-                capa.reduceExhaustion(food.getUseDuration(event.getItem()));
-            }
-        });
+        if(!event.getEntity().world.isRemote())
+            event.getEntity().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY).ifPresent(capa -> {
+                if(event.getItem().getItem() instanceof ItemFood)
+                {
+                    ItemFood food = (ItemFood) event.getItem().getItem();
+                    capa.reduceExhaustion(food.getUseDuration(event.getItem()));
+                }
+            });
     }
 
     @SubscribeEvent
     public static void onLivingAttack(LivingAttackEvent event)
     {
-        event.getEntity().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY).ifPresent(capa -> capa.increaseExhaustion(50));
+        if(!event.getEntity().world.isRemote())
+            event.getEntity().getCapability(CapabilityExhaustion.EXHAUSTION_CAPABILITY).ifPresent(capa -> capa.increaseExhaustion(50));
     }
 
     private static void updateModifierFor(IAttribute attribute, AttributeModifier modifier, EntityLivingBase entity)
